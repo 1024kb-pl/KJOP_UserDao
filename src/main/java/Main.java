@@ -5,9 +5,10 @@ public class Main {
 
     static Scanner scanner = new Scanner(System.in);
     static UserDao userDao = new UserDao();
+    static UserRoleDao userRoleDao = new UserRoleDao();
 
     public static void createUser() {
-        String name, lastname;
+        String name, lastname, role;
         Integer age;
 
         System.out.println("Type a name: ");
@@ -19,7 +20,10 @@ public class Main {
         System.out.println("Type your age: ");
         age = scanner.nextInt();
 
-        User user = new User(name, lastname, age);
+        System.out.println("Type user role: {USER, ADMIN) ");
+        role = scanner.next();
+
+        User user = new User(name, lastname, age, new UserRole(Role.valueOf(role)));
         userDao.createUser(user);
         System.out.println("Utworzono Usera: " + user.toString());
     }
@@ -50,7 +54,7 @@ public class Main {
     }
 
     public static void updateUser() {
-        String lastname, name;
+        String lastname, name, role;
         Integer id, age;
 
         System.out.println("Type user id to update: ");
@@ -66,12 +70,28 @@ public class Main {
         System.out.println("Type a new age: ");
         age = scanner.nextInt();
 
-        User user = new User(id, name,lastname , age);
+        System.out.println("Type user role: {USER, ADMIN) ");
+        role = scanner.next();
+
+        User user = new User(id, name, lastname, age, new UserRole(Role.valueOf(role)));
         userDao.updateUser(user);
         System.out.println("Update usera: " + user);
     }
 
+    private static void createUserRole() {
+        String roleName;
+        System.out.println("Type user role: {USER, ADMIN) ");
+        roleName = scanner.next();
+
+        UserRole userRole = new UserRole(Role.valueOf(roleName));
+        userRoleDao.createUserRole(userRole);
+        System.out.println("Create user role: " + userRole);
+    }
+
     public static void main(String[] args) {
+        //create user role table
+        createUserRole();
+        System.out.println("User roles: " + userRoleDao.getAllUserRoles());
         createUser();
         deleteUser();
         calculate();
@@ -81,4 +101,5 @@ public class Main {
         updateUser();
         System.out.println(userDao.getAllUsers());
     }
+
 }
