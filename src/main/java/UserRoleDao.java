@@ -1,3 +1,4 @@
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +7,7 @@ public class UserRoleDao {
 
     private Connection connection;
     private final String databaseName = "people";
-    private final String tableName = "user_roles";
+    private final String tableName = "roles";
     private final String user = "root";
     private final String password = "admin";
 
@@ -23,11 +24,35 @@ public class UserRoleDao {
         }
     }
 
-    public UserRole getRoleById(Integer id) {
+    public List<UserRole> getAllUserRoles() {
+        List<UserRole> userRoles = new LinkedList<UserRole>();
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            String query = "select * from " + tableName + "where id="+id;
+            String query = "select * from " + tableName;
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                Integer id = resultSet.getInt("id");
+                String name = resultSet.getString("role");
+
+
+                userRoles.add(new UserRole(id, Role.valueOf(name)));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userRoles;
+    }
+
+    public UserRole getRoleById(Integer id) {
+        Statement statement = null;
+        try {
+            String query = "select * from " + tableName + " where id = '" + id + "'";
+            statement = connection.createStatement();
+
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
@@ -47,7 +72,8 @@ public class UserRoleDao {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            String query = "select * from " + tableName + "where name="+roleName;
+            String query = "select * from " + tableName + " where role = '" + roleName + "'";
+
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
@@ -62,42 +88,4 @@ public class UserRoleDao {
         return 0;
     }
 
-    public void createUserRole(UserRole role) {
-        PreparedStatement statement;
-        try {
-            String query = "insert into " + tableName + " (name) values(?)";
-            statement = connection.prepareStatement(query);
-
-            statement.setString(1, role.getRole().name());
-            statement.execute();
-
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public List<UserRole> getAllUserRoles() {
-        List<UserRole> userRoles = new LinkedList<UserRole>();
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            String query = "select * from " + tableName;
-            ResultSet resultSet = statement.executeQuery(query);
-
-            while (resultSet.next()) {
-                Integer id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-
-
-                userRoles.add(new UserRole(id, Role.valueOf(name)));
-            }
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return userRoles;
-    }
 }

@@ -78,19 +78,7 @@ public class Main {
         System.out.println("Update usera: " + user);
     }
 
-    private static void createUserRole() {
-        String roleName;
-        System.out.println("Type user role: {USER, ADMIN) ");
-        roleName = scanner.next();
-
-        UserRole userRole = new UserRole(Role.valueOf(roleName));
-        userRoleDao.createUserRole(userRole);
-        System.out.println("Create user role: " + userRole);
-    }
-
     public static void main(String[] args) {
-        //create user role table
-        createUserRole();
         System.out.println("User roles: " + userRoleDao.getAllUserRoles());
         createUser();
         deleteUser();
